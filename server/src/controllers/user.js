@@ -1,17 +1,18 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 //User Creation
 const registerUser = async (req, res) => {
   try {
-    const {name,email,password}=req.body
+    const { name, email, password } = req.body;
 
     //encrypt password
-    const hashPassword=bcrypt.hash(password,12)
+    const hashPassword = await bcrypt.hash(password, 12);
 
-    const user = new User({name,email,hashPassword});
+    const user = await new User({ name, email, password: hashPassword });
     const result = await user.save();
-
+    // console.log("result: ", result)
     if (!result) {
       res.status(400).send({
         status: "error",
@@ -34,6 +35,31 @@ const registerUser = async (req, res) => {
   }
 };
 
+// user login
+
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).send({ message: "Wrong password" });
+    }
+
+    // Successful login
+    res.status(200).send({ sucess:true, message: "Login successful" });
+  } catch (error) {
+    console.error("Error while logging in:", error);
+    res.status(500).send({sucess:false, message: "Something went wrong while logged in", error:error.message });
+  }
+};
 
 //user Fetching
 const getUser = async (req, res) => {
@@ -69,8 +95,8 @@ const updateUser = async (req, res) => {
   try {
     const userId = req.body._id;
     const user = await User.findById(userId);
-    user.name=req.body.name;
-    const result=await user.save()
+    user.name = req.body.name;
+    const result = await user.save();
     if (!result) {
       res.status(404).send({
         status: "error",
@@ -93,5 +119,4 @@ const updateUser = async (req, res) => {
   }
 };
 
-
-module.exports = { registerUser, getUser, updateUser };
+module.exports = { registerUser, getUser, updateUser, loginUser };
