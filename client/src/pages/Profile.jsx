@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const UserForm = () => {
+const Profile = () => {
+  const [user, setUser] = useState({});
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,6 +14,7 @@ const UserForm = () => {
         const response = await axios.get("/api/user", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        setUser(response.data);
         setName(response.data.name);
         setEmail(response.data.email);
       } catch (error) {
@@ -38,28 +40,31 @@ const UserForm = () => {
   };
 
   return (
-    <form onSubmit={handleUpdate}>
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Update</button>
-    </form>
+    <div>
+      <h1>Profile</h1>
+      <form onSubmit={handleUpdate}>
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">Update</button>
+      </form>
+    </div>
   );
 };
 
-export default UserForm;
+export default Profile;
