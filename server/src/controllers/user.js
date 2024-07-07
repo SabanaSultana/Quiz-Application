@@ -1,6 +1,6 @@
 const User = require("../models/user");
 
-//user Fetching
+// User fetching
 const getUser = async (req, res) => {
   console.log("userId", req.userId);
   try {
@@ -9,23 +9,23 @@ const getUser = async (req, res) => {
 
     const userId = req.params.id;
     if (req.userId != userId) {
-      throw new Error(
-        "You can not access this user bcz you are not authorized"
-      );
+      return res.status(403).send({
+        status: "error",
+        message: "You cannot access this user because you are not authorized",
+      });
     }
     const user = await User.findById(userId, { name: 1, email: 1 });
     if (!user) {
-      res.status(404).send({
+      return res.status(404).send({
         status: "error",
         message: "User not found",
       });
-    } else {
-      res.status(200).send({
-        status: "success",
-        message: "User found",
-        data: { user: user },
-      });
     }
+    res.status(200).send({
+      status: "success",
+      message: "User found",
+      data: { user: user },
+    });
   } catch (error) {
     console.log("Error while fetching user:", error);
     res.status(500).send({
@@ -36,30 +36,30 @@ const getUser = async (req, res) => {
   }
 };
 
-//user details updating
+// User details updating
 const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
     if (req.userId != userId) {
-      throw new Error(
-        "You can not access this user bcz you are not authorized"
-      );
+      return res.status(403).send({
+        status: "error",
+        message: "You cannot access this user because you are not authorized",
+      });
     }
     const user = await User.findById(userId);
-    user.name = req.body.name;
-    const result = await user.save();
-    if (!result) {
-      res.status(404).send({
+    if (!user) {
+      return res.status(404).send({
         status: "error",
         message: "User not found",
       });
-    } else {
-      res.status(200).send({
-        status: "success",
-        message: "User updated successfully",
-        data: result,
-      });
     }
+    user.name = req.body.name;
+    const result = await user.save();
+    res.status(200).send({
+      status: "success",
+      message: "User updated successfully",
+      data: result,
+    });
   } catch (error) {
     console.log("Error while updating user:", error);
     res.status(500).send({
