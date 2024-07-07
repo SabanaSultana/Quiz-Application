@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "./Profile.css";
 
 const Profile = () => {
   const [user, setUser] = useState({});
@@ -40,9 +41,9 @@ const Profile = () => {
   };
 
   return (
-    <div>
+    <div className="profile-container">
       <h1>Profile</h1>
-      <form onSubmit={handleUpdate}>
+      <form onSubmit={handleUpdate} className="profile-form">
         <input
           type="text"
           placeholder="Name"

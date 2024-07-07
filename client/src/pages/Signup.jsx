@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./Signup.css"; 
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -19,7 +20,7 @@ const Signup = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="signup-form" onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="Name"
